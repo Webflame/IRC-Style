@@ -1,12 +1,13 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var crypto = require('crypto');
 
 app.get('/', function(req, res){
   res.sendfile('index.html');
 });
-app.get('/chat.js', function(req, res) {
-  res.sendfile('chat.js');
+app.get('/client.js', function(req, res) {
+  res.sendfile('client.js');
 });
 
 var nicknames = [];
@@ -21,6 +22,11 @@ function nicknameInUse(nick) {
     }
   }
   return r;
+}
+function ipMask(ip) {
+  var hash = crypto.createHash('md5');
+  hash.update(ip);
+  return hash.digest("hex");
 }
 
 io.on("connection", function(socket) {
